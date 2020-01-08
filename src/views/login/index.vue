@@ -3,18 +3,46 @@
     <!-- 导航条 -->
     <van-nav-bar title="登录" />
     <!-- 登录组件-表单 -->
-    <van-cell-group>
+      <!--
+      表单验证
+      1、使用 ValidationObserver 组件把需要验证的整个表单包起来
+      2、使用 ValidationProvider 组件把具体的表单元素包起来，例如 input
+         name   配置字段的提示名称
+         rules  配置校验规则
+         v-slot="{ errors }" 获取校验失败的错误提示消息
+     -->
+    <ValidationObserver>
+    <ValidationProvider name="手机号" rules="required" v-slot="{ errors }">
       <van-field v-model="user.mobile" placeholder="请输入手机号" left-icon="contact">
         <!-- 图标 -->
         <i class="icon icon-shouji" slot="left-icon"></i>
       </van-field>
+        <span>{{ errors[0] }}</span>
+      </ValidationProvider>
+        <ValidationProvider>
       <van-field v-model="user.code" placeholder="请输入验证码" left-icon="contact">
         <!-- 图标  -->
         <i class="icon icon-mima" slot="left-icon"></i>
+        <!-- 倒计时 -->
+        <van-count-down
+          v-if="isCountDownShow"
+          slot="button"
+          :time="1000 * 60"
+          format="ss s"
+          @finish="isCountDownShow = false"
+        />
         <!-- 验证码按钮 -->
-        <van-button round type="primary" size="small" slot="button">发送验证码</van-button>
+        <van-button
+          v-else
+          round
+          type="primary"
+          size="small"
+          slot="button"
+          @click="onSendSmsCode"
+        >发送验证码</van-button>
       </van-field>
-    </van-cell-group>
+      </ValidationProvider>
+    </ValidationObserver>
     <!-- 登录按钮 -->
     <div class="login-btn-box">
       <van-button type="info" @click="Onclick">登录</van-button>
@@ -23,7 +51,8 @@
 </template>
 
 <script>
-import request from '@/utils/request.js'
+// login 登录请求 getSmsCode 手机验证
+import { login, getSmsCode } from '@/utils/user.js'
 export default {
   name: 'LoginPage',
   components: {},
@@ -34,7 +63,8 @@ export default {
       user: {
         mobile: '', // 手机号
         code: '' // 验证码
-      }
+      },
+      isCountDownShow: false // 默认为关闭
     }
   },
   computed: {},
@@ -54,19 +84,32 @@ export default {
       // 提示对象.clear()
       // 3. 请求登录
       try {
-        const res = await request({
-          url: '/app/v1_0/authorizations',
-          method: 'POST',
-          data: user
-        })
+        const res = await login(user)
         console.log(res)
+        // 提示成功
         this.$toast.success('登录成功')
-      } catch (error) {
-        console.log('登录失败', error)
-        this.$toast.fail('失败文案')
+      } catch (err) {
+        console.log('登录失败', err)
+        this.$toast.fail('登录失败')
       }
 
       // 4. 根据后端返回结果执行后续业务处理
+    },
+    //   点击发送验证码
+    async onSendSmsCode () {
+      // 1. 验证手机号是否有效
+
+      // 2. 请求发送短信验证码
+      try {
+        // 解构赋值出来
+        const { mobile } = this.user
+        await getSmsCode(mobile)
+        // 开启倒计时
+        this.isCountDownShow = true
+      } catch (error) {
+        console.log('错误信息', error)
+        this.$toast('请勿频繁操作')
+      }
     }
   }
 }

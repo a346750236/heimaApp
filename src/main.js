@@ -3,6 +3,9 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+// 引入校验规则
+import './utils/validation.js'
+
 // rem适配： 动态设置 html 标签字体的大小
 import 'amfe-flexible'
 

@@ -5,6 +5,13 @@ Vue.use(VueRouter)
 
 // 路由配置表
 const routes = [
+  {
+    // 登录组件
+    path: '/login',
+    name: 'login',
+    // 按需加载
+    component: () => import('@/views/login/index.vue')
+  }
 ]
 
 const router = new VueRouter({

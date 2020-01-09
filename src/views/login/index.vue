@@ -106,8 +106,9 @@ export default {
       // 提示对象.clear()
       // 3. 请求登录
       try {
-        const res = await login(user)
-        console.log(res)
+        const { data } = await login(user)
+        this.$store.commit('setUser', data)
+        console.log(data)
         // 提示成功
         this.$toast.success('登录成功')
       } catch (err) {

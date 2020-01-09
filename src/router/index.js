@@ -6,6 +6,10 @@ Vue.use(VueRouter)
 // 路由配置表
 const routes = [
   {
+    path: '',
+    redirect: '/login'
+  },
+  {
     // 登录组件
     path: '/login',
     name: 'login',

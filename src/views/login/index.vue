@@ -13,14 +13,15 @@
      -->
     <ValidationObserver ref="Myform">
       <!-- immediate是自动获取焦点校验 -->
-    <ValidationProvider name="手机号" rules="required" immediate >
+    <ValidationProvider name="手机号" rules="required|mobile" immediate >
       <van-field v-model="user.mobile" placeholder="请输入手机号" left-icon="contact">
         <!-- 图标 -->
-        <i class="icon icon-shouji" slot="left-icon"></i>
+        <!-- <i class="icon icon-shouji" slot="left-icon"></i> -->
+        <i class="icon icon-lbj" slot="left-icon"></i>
       </van-field>
       </ValidationProvider>
-     <ValidationProvider>
-      <van-field v-model="user.code" placeholder="请输入验证码" left-icon="contact">
+     <ValidationProvider name="验证码" rules="required|code" immediate>
+      <van-field v-model="user.code"  placeholder="请输入验证码" left-icon="contact">
         <!-- 图标  -->
         <i class="icon icon-mima" slot="left-icon"></i>
         <!-- 倒计时 -->
@@ -53,6 +54,7 @@
 <script>
 // login 登录请求 getSmsCode 手机验证
 import { login, getSmsCode } from '@/utils/user.js'
+import { validate } from 'vee-validate'
 export default {
   name: 'LoginPage',
   components: {},
@@ -80,8 +82,12 @@ export default {
       if (!success) {
         // 表单错误处理
         const errors = this.$refs.Myform.errors
+        // 获取错误信息遍历
+        // 因为遍历出来的是数组
+        // 拿到数组的第一项
         for (let key in errors) {
           const item = errors[key]
+          // console.log(item)
           if (item[0]) {
             this.$toast(item[0])
             //  找到第一个错误的消息,给出指示，停止遍历
@@ -113,8 +119,21 @@ export default {
     },
     //   点击发送验证码
     async onSendSmsCode () {
+      const { mobile } = this.user
       // 1. 验证手机号是否有效
-
+      // 参数1：要验证的数据
+      // 参数2：验证规则
+      // 参数3：一个可选的配置对象，例如配置错误消息字段名称 name
+      // 返回值：{ valid, errors, ... }
+      //          valid: 验证是否成功，成功 true，失败 false
+      //          errors：一个数组，错误提示消息
+      const validateResult = await validate(mobile, 'required|mobile', {
+        name: '手机号'
+      })
+      if (!validateResult.valid) {
+        this.$toast(validateResult.errors[0])
+        return
+      }
       // 2. 请求发送短信验证码
       try {
         // 解构赋值出来

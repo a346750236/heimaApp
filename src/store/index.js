@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import { getItem, setItem } from '@/utils/storage.js'
 Vue.use(Vuex)
 
+// 设置一个常量
 const USER = 'user'
 export default new Vuex.Store({
   state: {

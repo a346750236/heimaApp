@@ -47,6 +47,12 @@ const routes = [
         component: () => import('@/views/my/index.vue')
       }
     ]
+  },
+  // 用户页面
+  {
+    path: '/user/:userId',
+    name: 'user',
+    component: () => import('@/views/user/index.vue')
   }
 ]
 

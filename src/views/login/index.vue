@@ -53,7 +53,7 @@
 
 <script>
 // login 登录请求 getSmsCode 手机验证
-import { login, getSmsCode } from '@/utils/user.js'
+import { login, getSmsCode } from '@/api/user.js'
 import { validate } from 'vee-validate'
 export default {
   name: 'LoginPage',
@@ -107,8 +107,10 @@ export default {
       // 3. 请求登录
       try {
         const { data } = await login(user)
-        this.$store.commit('setUser', data)
+        this.$store.commit('setUser', data.data)
         console.log(data)
+        // 登录操作
+        this.$router.push('/')
         // 提示成功
         this.$toast.success('登录成功')
       } catch (err) {

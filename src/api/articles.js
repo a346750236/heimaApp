@@ -9,3 +9,12 @@ export const getArticlesByUser = (userId, params) => {
     params
   })
 }
+
+// 获取文章的文章列表
+export const getArticles = params => {
+  return request({
+    method: 'GET',
+    url: '/app/v1_1/articles',
+    params
+  })
+}

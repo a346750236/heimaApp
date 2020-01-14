@@ -1,6 +1,7 @@
 <template>
   <div>
     <!-- list组件用来加载数据的 -->
+    <!-- onRefresh 下拉刷新 -->
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
         <van-cell v-for="(item,index) in list" :key="index" :title="item.title" />

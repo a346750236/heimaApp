@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+// import { Search } from 'vant'
 
 Vue.use(VueRouter)
 
@@ -54,9 +55,19 @@ const routes = [
     name: 'user',
     component: () => import('@/views/user/index.vue')
   },
+  // 文章搜素
   {
     path: '/search',
+    name: 'search',
     component: () => import('@/views/search/index.vue')
+  },
+  // 文章内容
+  {
+    path: '/article/:articleId',
+    name: 'article',
+    component: () => import('@/views/article/index.vue'),
+    // 将路由动态参数映射到组件的 props 中，更推荐这种做法
+    props: true
   }
 ]
 

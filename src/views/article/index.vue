@@ -75,6 +75,7 @@
     type="default"
     round
     size="small"
+    @click="isReplyShow = true"
   >写评论</van-button>
   <van-icon
     class="comment-icon"
@@ -94,6 +95,17 @@
   <van-icon class="share-icon" name="share" />
 </div>
   <!-- /底部区域 -->
+
+  <!-- 评论文章 -->
+      <van-popup
+        v-model="isReplyShow"
+        position="bottom"
+        style="height: 20%"
+    >
+    <!-- 评论项 -->
+    <post-comment></post-comment>
+</van-popup>
+<!-- /评论文章 -->
   </div>
 </template>
 
@@ -114,10 +126,12 @@ import {
   // mapState ：映射获取state的数据
 import { mapState } from 'vuex'
 import ArticleComment from './components/article-comment'
+import PostComment from './components/post-comment'
 export default {
   name: 'ArticlePage',
   components: {
-    ArticleComment
+    ArticleComment,
+    PostComment
   },
   props: {
     articleId: {
@@ -129,7 +143,8 @@ export default {
     return {
       article: {}, // 文章详情
       loading: true, // 文章加载loading状态
-      isFollowLoading: false // 关注按钮的loading
+      isFollowLoading: false, // 关注按钮的loading
+      isReplyShow: false // 发布评论文章的弹层
     }
   },
   computed: {

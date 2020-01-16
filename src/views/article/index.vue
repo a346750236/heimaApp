@@ -36,7 +36,17 @@
         <p class="time">{{ article.pubdate }}</p>
       </div>
     </div>
-    <van-button class="follow-btn" type="info" size="small" round>+ 关注</van-button>
+    <van-button
+     v-if="!user || article.aut_id !== user.id"
+     class="follow-btn"
+     :type="article.is_followed ? 'default' : 'info'"
+     size="small"
+      round
+      :loading="isFollowLoading"
+      @click="onFollow"
+      >
+      {{ article.is_followed ? '已关注' : '+ 关注' }}
+      </van-button>
   </div>
   <div class="markdown-body" v-html="article.content"></div>
 </div>
@@ -88,12 +98,18 @@
 // 点击文章显示当前ID文章   deleteCollect  // 取消收藏   addCollect // 收藏
 // addLike  // 点赞
 // deleteLike  // 取消点赞
+// addFollow  // 关注
+// deleteFollow //取消关注
+import { addFollow, deleteFollow } from '@/api/user'
 import {
   getArticleById,
   deleteCollect,
   addCollect,
   addLike,
   deleteLike } from '@/api/articles'
+  // vuex 模块提供了一些辅助方法，专门用来让我们更方便的获取容器中的数据
+  // mapState ：映射获取state的数据
+import { mapState } from 'vuex'
 export default {
   name: 'ArticlePage',
   components: {},
@@ -106,10 +122,15 @@ export default {
   data () {
     return {
       article: {}, // 文章详情
-      loading: true // 文章加载loading状态
+      loading: true, // 文章加载loading状态
+      isFollowLoading: false // 关注按钮的loading
     }
   },
-  computed: {},
+  computed: {
+    // mapState  方法返回一个对象，对象中就是映射过来的容器成员
+    //  ...操作符就是把一个对象展开，混入当前对象中
+    ...mapState(['user'])
+  },
   watch: {},
   created () {
     //   点击显示的文章
@@ -182,6 +203,31 @@ export default {
         console.log(err)
         this.$toast.fail('操作失败')
       }
+    },
+    // 关注操作
+    async onFollow () {
+      // 开启按钮的 loading 状态
+      this.isFollowLoading = true
+
+      try {
+        // 如果已关注，则取消关注
+        const authorId = this.article.aut_id
+        if (this.article.is_followed) {
+          await deleteFollow(authorId)
+        } else {
+          // 否则添加关注
+          await addFollow(authorId)
+        }
+
+        // 更新视图
+        this.article.is_followed = !this.article.is_followed
+      } catch (err) {
+        console.log(err)
+        this.$toast.fail('操作失败')
+      }
+
+      // 关闭按钮的 loading 状态
+      this.isFollowLoading = false
     }
 
   }

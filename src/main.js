@@ -3,6 +3,9 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
+// 引入格式时间文件
+import './utils/detetime.js'
+
 // 引入校验规则
 import './utils/validation.js'
 

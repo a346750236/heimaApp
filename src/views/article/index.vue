@@ -74,7 +74,8 @@
   />
   <van-icon
     color="#e5645f"
-    name="good-job"
+    :name="article.attitude === 1 ?  'good-job' : 'good-job-o'"
+    @click="onLike"
   />
   <van-icon class="share-icon" name="share" />
 </div>
@@ -85,7 +86,14 @@
 
 <script>
 // 点击文章显示当前ID文章   deleteCollect  // 取消收藏   addCollect // 收藏
-import { getArticleById, deleteCollect, addCollect } from '@/api/articles'
+// addLike  // 点赞
+// deleteLike  // 取消点赞
+import {
+  getArticleById,
+  deleteCollect,
+  addCollect,
+  addLike,
+  deleteLike } from '@/api/articles'
 export default {
   name: 'ArticlePage',
   components: {},
@@ -122,6 +130,7 @@ export default {
       //   关闭状态
       this.loading = false
     },
+    // 收藏操作
     async onCollect () {
       // 这里 loading 不仅仅是为了交互提示，更重要的是请求期间禁用背景点击功能，防止用户不断的操作界面发出请求
       this.$toast.loading({
@@ -143,6 +152,32 @@ export default {
           this.$toast.success('收藏成功')
         }
         this.article.is_collected = !this.article.is_collected
+      } catch (err) {
+        console.log(err)
+        this.$toast.fail('操作失败')
+      }
+    },
+    // 点赞操作
+    async onLike () {
+      // 两个作用：1、交互提示 2、防止网络慢用户连续不断的点击按钮请求
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        message: '操作中...',
+        forbidClick: true // 是否禁止背景点击
+      })
+
+      try {
+        // 如果已经点赞，则取消点赞
+        if (this.article.attitude === 1) {
+          await deleteLike(this.articleId)
+          this.article.attitude = -1
+          this.$toast.success('取消点赞')
+        } else {
+          // 否则添加点赞
+          await addLike(this.articleId)
+          this.article.attitude = 1
+          this.$toast.success('点赞成功')
+        }
       } catch (err) {
         console.log(err)
         this.$toast.fail('操作失败')

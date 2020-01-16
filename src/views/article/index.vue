@@ -49,6 +49,9 @@
       </van-button>
   </div>
   <div class="markdown-body" v-html="article.content"></div>
+      <!-- 文章评论 -->
+     <article-comment :article-id="articleId" />
+     <!-- /文章评论 -->
 </div>
 <!-- /文章详情 -->
 
@@ -64,7 +67,8 @@
       >点击重试</van-button>
     </div>
     <!-- /加载失败提示 -->
-<!-- 底部区域 -->
+
+ <!-- 底部区域 -->
 <div class="footer">
   <van-button
     class="write-btn"
@@ -89,8 +93,7 @@
   />
   <van-icon class="share-icon" name="share" />
 </div>
-<!-- /底部区域 -->
-
+  <!-- /底部区域 -->
   </div>
 </template>
 
@@ -110,9 +113,12 @@ import {
   // vuex 模块提供了一些辅助方法，专门用来让我们更方便的获取容器中的数据
   // mapState ：映射获取state的数据
 import { mapState } from 'vuex'
+import ArticleComment from './components/article-comment'
 export default {
   name: 'ArticlePage',
-  components: {},
+  components: {
+    ArticleComment
+  },
   props: {
     articleId: {
       type: String,

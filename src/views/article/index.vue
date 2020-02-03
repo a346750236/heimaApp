@@ -33,7 +33,7 @@
       </div>
       <div class="markdown-body" v-html="article.content"></div>
       <!-- 文章评论 -->
-      <article-comment :article-id="articleId" />
+      <article-comment ref="article-comment" :article-id="articleId" />
       <!-- /文章评论 -->
     </div>
     <!-- /文章详情 -->
@@ -74,7 +74,7 @@
           :value="postMessage"
           @input="postMessage = 事件参数"
         本质还是父子通信
-       -->
+      -->
       <post-comment v-model="postMessage" @click-post="onPost"></post-comment>
     </van-popup>
     <!-- /评论文章 -->
@@ -100,6 +100,8 @@ import {
 import { mapState } from 'vuex'
 import ArticleComment from './components/article-comment'
 import PostComment from './components/post-comment'
+import { addComment } from '@/api/comment' // 发布评论
+
 export default {
   name: 'ArticlePage',
   components: {
@@ -225,8 +227,30 @@ export default {
       this.isFollowLoading = false
     },
     // 发布评论
-    onPost () {
-      console.log('发布')
+    async onPost () {
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        message: '发布中...',
+        forbidClick: true // 是否禁止背景点击
+      })
+      try {
+        const { data } = await addComment({
+          target: this.articleId,
+          content: this.postMessage
+        })
+        // 清空文本框
+        this.postMessage = ''
+
+        // 关闭弹层
+        this.isReplyShow = false
+
+        // 将数据添加到列表顶部
+        this.$refs['article-comment'].list.unshift(data.data.new_obj)
+        this.$toast.success('发布成功')
+      } catch (error) {
+        console.log(error)
+        this.$toast.fail('发布失败')
+      }
     }
   }
 }

@@ -1,111 +1,83 @@
 <template>
   <div class="article-container">
     <!-- 导航栏 -->
-    <van-nav-bar
-      title="文章详情"
-      left-arrow
-      fixed
-      @click-left="$router.back()"
-    ></van-nav-bar>
+    <van-nav-bar title="文章详情" left-arrow fixed @click-left="$router.back()"></van-nav-bar>
     <!-- /导航栏 -->
 
     <!-- 加载中 -->
-    <van-loading
-      v-if="loading"
-      class="loading"
-      color="#1989fa"
-      vertical
-    >
+    <van-loading v-if="loading" class="loading" color="#1989fa" vertical>
       <slot>加载中...</slot>
     </van-loading>
     <!-- /加载中 -->
 
-   <!-- 文章详情 -->
-<div class="detail" v-else-if="article.title">
-  <h3 class="title">{{ article.title }}</h3>
-  <div class="author-wrap">
-    <div class="base-info">
-      <van-image
-        class="avatar"
-        round
-        fit="cover"
-        :src="article.aut_photo"
-      />
-      <div class="text">
-        <p class="name">{{ article.aut_name }}</p>
-        <p class="time">{{ article.pubdate | relativeTime }}</p>
+    <!-- 文章详情 -->
+    <div class="detail" v-else-if="article.title">
+      <h3 class="title">{{ article.title }}</h3>
+      <div class="author-wrap">
+        <div class="base-info">
+          <van-image class="avatar" round fit="cover" :src="article.aut_photo" />
+          <div class="text">
+            <p class="name">{{ article.aut_name }}</p>
+            <p class="time">{{ article.pubdate | relativeTime }}</p>
+          </div>
+        </div>
+        <van-button
+          v-if="!user || article.aut_id !== user.id"
+          class="follow-btn"
+          :type="article.is_followed ? 'default' : 'info'"
+          size="small"
+          round
+          :loading="isFollowLoading"
+          @click="onFollow"
+        >{{ article.is_followed ? '已关注' : '+ 关注' }}</van-button>
       </div>
-    </div>
-    <van-button
-     v-if="!user || article.aut_id !== user.id"
-     class="follow-btn"
-     :type="article.is_followed ? 'default' : 'info'"
-     size="small"
-      round
-      :loading="isFollowLoading"
-      @click="onFollow"
-      >
-      {{ article.is_followed ? '已关注' : '+ 关注' }}
-      </van-button>
-  </div>
-  <div class="markdown-body" v-html="article.content"></div>
+      <div class="markdown-body" v-html="article.content"></div>
       <!-- 文章评论 -->
-     <article-comment :article-id="articleId" />
-     <!-- /文章评论 -->
-</div>
-<!-- /文章详情 -->
+      <article-comment :article-id="articleId" />
+      <!-- /文章评论 -->
+    </div>
+    <!-- /文章详情 -->
 
-   <!-- 加载失败提示 -->
+    <!-- 加载失败提示 -->
     <div v-else class="error">
-      <img src="./no-network.png" alt="no-network">
+      <img src="./no-network.png" alt="no-network" />
       <p class="text">亲，网络不给力哦~</p>
-      <van-button
-        class="btn"
-        type="default"
-        size="small"
-        @click="loadArticle"
-      >点击重试</van-button>
+      <van-button class="btn" type="default" size="small" @click="loadArticle">点击重试</van-button>
     </div>
     <!-- /加载失败提示 -->
 
- <!-- 底部区域 -->
-<div class="footer">
-  <van-button
-    class="write-btn"
-    type="default"
-    round
-    size="small"
-    @click="isReplyShow = true"
-  >写评论</van-button>
-  <van-icon
-    class="comment-icon"
-    name="comment-o"
-    info="9"
-  />
-  <van-icon
-    color="orange"
-    :name="article.is_collected ? 'star' : 'star-o'"
-    @click="onCollect"
-  />
-  <van-icon
-    color="#e5645f"
-    :name="article.attitude === 1 ?  'good-job' : 'good-job-o'"
-    @click="onLike"
-  />
-  <van-icon class="share-icon" name="share" />
-</div>
-  <!-- /底部区域 -->
+    <!-- 底部区域 -->
+    <div class="footer">
+      <van-button
+        class="write-btn"
+        type="default"
+        round
+        size="small"
+        @click="isReplyShow = true"
+      >写评论</van-button>
+      <van-icon class="comment-icon" name="comment-o" info="9" />
+      <van-icon color="orange" :name="article.is_collected ? 'star' : 'star-o'" @click="onCollect" />
+      <van-icon
+        color="#e5645f"
+        :name="article.attitude === 1 ?  'good-job' : 'good-job-o'"
+        @click="onLike"
+      />
+      <van-icon class="share-icon" name="share" />
+    </div>
+    <!-- /底部区域 -->
 
-  <!-- 评论文章 -->
-      <van-popup
-        v-model="isReplyShow"
-        position="bottom"
-        style="height: 20%"
-    >
-    <!-- 评论项 -->
-    <post-comment></post-comment>
-</van-popup>
-<!-- /评论文章 -->
+    <!-- 评论文章 -->
+    <van-popup v-model="isReplyShow" position="bottom" style="height: 20%">
+      <!-- 评论项 -->
+      <!--
+        在组件上使用 v-model
+          :value="postMessage"
+          @input="postMessage = 事件参数"
+        本质还是父子通信
+       -->
+      <post-comment v-model="postMessage" @click-post="onPost"></post-comment>
+    </van-popup>
+    <!-- /评论文章 -->
   </div>
 </template>
 
@@ -121,9 +93,10 @@ import {
   deleteCollect,
   addCollect,
   addLike,
-  deleteLike } from '@/api/articles'
-  // vuex 模块提供了一些辅助方法，专门用来让我们更方便的获取容器中的数据
-  // mapState ：映射获取state的数据
+  deleteLike
+} from '@/api/articles'
+// vuex 模块提供了一些辅助方法，专门用来让我们更方便的获取容器中的数据
+// mapState ：映射获取state的数据
 import { mapState } from 'vuex'
 import ArticleComment from './components/article-comment'
 import PostComment from './components/post-comment'
@@ -144,7 +117,8 @@ export default {
       article: {}, // 文章详情
       loading: true, // 文章加载loading状态
       isFollowLoading: false, // 关注按钮的loading
-      isReplyShow: false // 发布评论文章的弹层
+      isReplyShow: false, // 发布评论文章的弹层
+      postMessage: '' // 发布评论内容
     }
   },
   computed: {
@@ -249,8 +223,11 @@ export default {
 
       // 关闭按钮的 loading 状态
       this.isFollowLoading = false
+    },
+    // 发布评论
+    onPost () {
+      console.log('发布')
     }
-
   }
 }
 </script>
@@ -270,7 +247,7 @@ export default {
       margin: 0;
       padding-top: 24px;
       font-size: 20px;
-      color: #3A3A3A;
+      color: #3a3a3a;
     }
     .author-wrap {
       display: flex;

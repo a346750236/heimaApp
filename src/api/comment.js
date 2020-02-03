@@ -6,7 +6,7 @@ import request from '@/utils/request'
 /**
  * 获取文章列表
  */
-export function getComments (params) {
+export const getComments = params => {
   return request({
     method: 'GET',
     url: '/app/v1_0/comments',

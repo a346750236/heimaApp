@@ -15,8 +15,7 @@
          >
       </comment-item>
     </van-list>
-    <!-- 评论列表 -->
-
+    <!-- /评论列表 -->
   </div>
 </template>
 

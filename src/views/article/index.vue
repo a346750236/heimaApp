@@ -33,7 +33,11 @@
       </div>
       <div class="markdown-body" v-html="article.content"></div>
       <!-- 文章评论 -->
-      <article-comment ref="article-comment" :article-id="articleId" />
+      <article-comment
+        ref="article-comment"
+        :article-id="articleId"
+        @click-reply="onReplyShow"
+       />
       <!-- /文章评论 -->
     </div>
     <!-- /文章详情 -->
@@ -78,6 +82,15 @@
       <post-comment v-model="postMessage" @click-post="onPost"></post-comment>
     </van-popup>
     <!-- /评论文章 -->
+     <!-- 评论回复 -->
+    <van-popup
+      v-model="isPostShow"
+      position="bottom"
+      style="height: 90%"
+    >
+      <comment-reply :comment="currentComment" />
+    </van-popup>
+    <!-- /评论回复 -->
   </div>
 </template>
 
@@ -100,13 +113,16 @@ import {
 import { mapState } from 'vuex'
 import ArticleComment from './components/article-comment'
 import PostComment from './components/post-comment'
+import CommentReply from './components/comment-reply'
+
 import { addComment } from '@/api/comment' // 发布评论
 
 export default {
   name: 'ArticlePage',
   components: {
     ArticleComment,
-    PostComment
+    PostComment,
+    CommentReply
   },
   props: {
     articleId: {
@@ -120,7 +136,9 @@ export default {
       loading: true, // 文章加载loading状态
       isFollowLoading: false, // 关注按钮的loading
       isReplyShow: false, // 发布评论文章的弹层
-      postMessage: '' // 发布评论内容
+      postMessage: '', // 发布评论内容
+      isPostShow: false, // 展示评论回复弹层
+      currentComment: {} // 点击回复的那个评论项
     }
   },
   computed: {
@@ -251,6 +269,13 @@ export default {
         console.log(error)
         this.$toast.fail('发布失败')
       }
+    },
+    onReplyShow (comment) {
+      // 将点击回复所在的评论对象记录起来
+      this.currentComment = comment
+
+      // 展示回复的弹层
+      this.isPostShow = true
     }
   }
 }

@@ -12,6 +12,7 @@
         :key="index"
          :title="item.content"
          :comment="item"
+         @click-reply="$emit('click-reply', $event)"
          >
       </comment-item>
     </van-list>

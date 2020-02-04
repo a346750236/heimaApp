@@ -11,10 +11,22 @@
         change 事件：当用户所选的图片发生改变的时候才会触发
       -->
       <input type="file" ref="file" hidden @change="onFileChange" />
-      <van-cell is-link title="昵称" :value="user.name" @click="isEditNameShow = true"></van-cell>
+      <van-cell is-link title="昵称"
+        :value="user.name"
+        @click="isEditNameShow = true"
+        >
+      </van-cell>
       <van-cell is-link title="介绍" value="内容"></van-cell>
-      <van-cell is-link title="性别" :value="user.gender ===0 ? '男' : ' 女'"></van-cell>
-      <van-cell is-link title="生日" :value="user.birthday"></van-cell>
+      <van-cell is-link title="性别"
+       :value="user.gender === 0 ? '男' : ' 女'"
+       @click="isEditGenderShow = true"
+       >
+       </van-cell>
+      <van-cell
+       is-link title="生日"
+       :value="user.birthday"
+       @click="isEditBirthdayShow = true"
+       ></van-cell>
     </van-cell-group>
 
     <!-- 头像预览 -->
@@ -57,10 +69,41 @@
       </div>
     </van-popup>
     <!-- /修改用户昵称 -->
+
+    <!-- 编辑用户性别 -->
+    <van-action-sheet
+       v-model="isEditGenderShow"
+       :actions="actions"
+       cancel-text="取消"
+       @select="onGenderSelect"
+       @cancel="isEditGenderShow = false"
+       />
+    <!-- /编辑用户性别 -->
+
+    <!-- 修改生日 -->
+    <van-popup v-model="isEditBirthdayShow" position="bottom"
+    >
+     <!--
+        v-model="currentDate" 默认显示时间和同步用户选择的时间
+        :min-date="minDate" 最小可选日期
+        max-date  最大可选日期
+       -->
+      <van-datetime-picker
+        :value="currentDate"
+        type="date"
+        :min-date="minDate"
+        :max-date="maxDate"
+        @cancel="isEditBirthdayShow = false"
+        @confirm="onUpdateBirthday"
+      />
+    </van-popup>
+    <!-- /修改生日 -->
   </div>
 </template>
 
 <script>
+// 引入moment时间格式组件
+import moment from 'moment'
 // GetuserProfile   用户信息
 // updateUserPhoto  更新头像
 // updateUserProfile 用户昵称
@@ -78,7 +121,17 @@ export default {
       isPreviewShow: false, // 上传头像默认隐藏
       images: [], // 默认空数组
       isEditNameShow: false, // 修改昵称默认隐藏
-      inputName: '' // 修改昵称内容
+      inputName: '', // 修改昵称内容
+      isEditGenderShow: false, // 修改性别默认隐藏
+      actions: [
+        // name 会显示出来，value 是我们自己添加的
+        { name: '男', value: 0 },
+        { name: '女', value: 1 }
+      ],
+      isEditBirthdayShow: false, // 修改生日默认隐藏
+      minDate: new Date(1970, 0, 1),
+      maxDate: new Date()
+    //   currentDate: new Date()
     }
   },
   computed: {
@@ -87,6 +140,10 @@ export default {
     // 因为多次访问到了该成员，所以我可以使用计算属性封装简化对成员的访问
     file () {
       return this.$refs['file']
+    },
+    currentDate () {
+      // 把字符串格式的日期转换为 JavaScript 日期对象，设置给 Vant 日期选择器
+      return new Date(this.user.birthday)
     }
   },
   watch: {},
@@ -185,6 +242,27 @@ export default {
 
       // 关闭弹层
       this.isEditNameShow = false
+    },
+    // 修改性别
+    async onGenderSelect (data) {
+      await this.updateUserProfile('gender', data.value)
+      // 更新视图
+      this.user.gender = data.value
+
+      // 关闭弹层
+      this.isEditGenderShow = false
+    },
+    // 修改生日
+    async onUpdateBirthday (value) {
+      // 使用 moment 把日期对象格式化为指定格式的字符串
+      let date = moment(value).format('YYYY-MM-DD')
+      // 请求提交
+      await this.updateUserProfile('birthday', date)
+      // 更新视图
+      this.user.birthday = date
+
+      // 关闭弹层
+      this.isEditBirthdayShow = false
     }
   }
 }

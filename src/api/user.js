@@ -58,11 +58,27 @@ export const deleteFollow = userId => {
 }
 
 /**
- * 获取用户资料啊
+ * 获取用户资料
  */
 export const GetuserProfile = () => {
   return request({
     method: 'GET',
     url: '/app/v1_0/user/profile'
+  })
+}
+
+/**
+ * 获取用户头像
+ */
+// 更新用户头像
+export const updateUserPhoto = data => {
+  return request({
+    method: 'PATCH',
+    url: '/app/v1_0/user/photo',
+    // 注意：
+    // 如果 Content-Type 要求是 application/json，则传递 {}
+    // 如果 Content-Type 要求是 multipart/form-data，则传递 FormData 对象
+    // multipart/form-data 常见于文件上传的格式要求
+    data
   })
 }

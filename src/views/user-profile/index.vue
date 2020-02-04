@@ -4,25 +4,20 @@
     <van-nav-bar title="编辑资料" left-arrow @click-left="$router.back()"></van-nav-bar>
     <van-cell-group>
       <van-cell is-link title="头像">
-        <van-image
-         round
-         class="avater"
-         :src="user.photo"
-         @click="onAvatarClick"
-         />
+        <van-image round class="avater" :src="user.photo" @click="onAvatarClick" />
       </van-cell>
-       <!--
+      <!--
         表单元素的 hidden 属性：隐藏表单元素
         change 事件：当用户所选的图片发生改变的时候才会触发
-       -->
-      <input type="file" ref="file" hidden @change="onFileChange">
-      <van-cell is-link title="昵称" :value="user.name"></van-cell>
+      -->
+      <input type="file" ref="file" hidden @change="onFileChange" />
+      <van-cell is-link title="昵称" :value="user.name" @click="isEditNameShow = true"></van-cell>
       <van-cell is-link title="介绍" value="内容"></van-cell>
       <van-cell is-link title="性别" :value="user.gender ===0 ? '男' : ' 女'"></van-cell>
       <van-cell is-link title="生日" :value="user.birthday"></van-cell>
     </van-cell-group>
 
-     <!-- 头像预览 -->
+    <!-- 头像预览 -->
     <van-image-preview v-model="isPreviewShow" :images="images" @close="$refs.file.value = ''">
       <van-nav-bar
         slot="cover"
@@ -34,6 +29,33 @@
     </van-image-preview>
     <!-- /头像预览 -->
 
+    <!-- 修改用户昵称 -->
+    <van-popup v-model="isEditNameShow" position="bottom">
+      <van-nav-bar
+        title="编辑昵称"
+        left-text="取消"
+        right-text="确定"
+        @click-left="isEditNameShow = false"
+        @click-right="onUpdateName"
+      />
+      <div>
+        <!--
+          field 组件有一个 value 事件，该事件接收一个参数：输入框的值
+          在模板中 $event 表示事件参数，Vue 本身提供的
+          关于 $event 的参考链接：https://cn.vuejs.org/v2/guide/events.html#%E5%86%85%E8%81%94%E5%A4%84%E7%90%86%E5%99%A8%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95
+        -->
+        <van-field
+          v-model="message"
+          rows="2"
+          autosize
+          type="textarea"
+          maxlength="50"
+          placeholder="请输入留言"
+          show-word-limit
+        />
+      </div>
+    </van-popup>
+    <!-- /修改用户昵称 -->
   </div>
 </template>
 
@@ -49,7 +71,9 @@ export default {
     return {
       user: {}, // 用户信息
       isPreviewShow: false, // 上传头像默认隐藏
-      images: [] // 默认空数组
+      images: [], // 默认空数组
+      isEditNameShow: false, // 修改昵称默认隐藏
+      message: '123' // 修改昵称内容
     }
   },
   computed: {
@@ -128,18 +152,21 @@ export default {
         console.log(err)
         this.$toast.fail('更新失败')
       }
+    },
+    // 修改昵称
+    onUpdateName () {
+      console.log('111')
     }
-
   }
 }
 </script>
 
 <style scoped lang="less">
-.user-profile{
-    .avater{
-        width: 30px;
-        height: 30px;
-    }
+.user-profile {
+  .avater {
+    width: 30px;
+    height: 30px;
+  }
 
   /deep/ .van-image-preview__cover {
     top: unset;

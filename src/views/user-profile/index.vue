@@ -45,7 +45,8 @@
           关于 $event 的参考链接：https://cn.vuejs.org/v2/guide/events.html#%E5%86%85%E8%81%94%E5%A4%84%E7%90%86%E5%99%A8%E4%B8%AD%E7%9A%84%E6%96%B9%E6%B3%95
         -->
         <van-field
-          v-model="message"
+          :value="user.name"
+          @input="inputName = $event"
           rows="2"
           autosize
           type="textarea"
@@ -62,7 +63,11 @@
 <script>
 // GetuserProfile   用户信息
 // updateUserPhoto  更新头像
-import { GetuserProfile, updateUserPhoto } from '@/api/user'
+// updateUserProfile 用户昵称
+import {
+  GetuserProfile,
+  updateUserPhoto,
+  updateUserProfile } from '@/api/user'
 export default {
   name: 'UserProfile',
   components: {},
@@ -73,7 +78,7 @@ export default {
       isPreviewShow: false, // 上传头像默认隐藏
       images: [], // 默认空数组
       isEditNameShow: false, // 修改昵称默认隐藏
-      message: '123' // 修改昵称内容
+      inputName: '' // 修改昵称内容
     }
   },
   computed: {
@@ -153,9 +158,33 @@ export default {
         this.$toast.fail('更新失败')
       }
     },
+    // 封装代码复用
+    // field: 要修改的数据字段
+    // value：数据值
+    async updateUserProfile (field, value) {
+      this.$toast.loading({
+        duration: 0, // 持续展示 toast
+        message: '更新中...',
+        forbidClick: true // 是否禁止背景点击
+      })
+      try {
+        await updateUserProfile({
+          [field]: value // 注意属性名使用中括号包裹，否则会当做字符串来使用而不是变量
+        })
+        this.$toast.success('更新成功')
+      } catch (error) {
+        console.log(error)
+        this.$toast.fail('更新失败')
+      }
+    },
     // 修改昵称
-    onUpdateName () {
-      console.log('111')
+    async onUpdateName () {
+      await this.updateUserProfile('name', this.inputName)
+      // 更新视图
+      this.user.name = this.inputName
+
+      // 关闭弹层
+      this.isEditNameShow = false
     }
   }
 }

@@ -49,6 +49,12 @@ const routes = [
       }
     ]
   },
+  {
+    // 编辑用户
+    path: '/user/profile',
+    name: 'user-profile',
+    component: () => import('@/views/user-profile/index.vue')
+  },
   // 用户页面
   {
     path: '/user/:userId',

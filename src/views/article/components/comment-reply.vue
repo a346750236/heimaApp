@@ -1,7 +1,7 @@
 <template>
   <div class="comment-reply">
     <van-nav-bar  class="comment-replys" :title="`${comment.reply_count} 条回复`">
-      <van-icon slot="left" @click="isPostShow = false"  name="cross" />
+      <van-icon slot="left"  name="cross" />
     </van-nav-bar>
     <!-- 当前评论 -->
     <comment-item :comment="comment" />

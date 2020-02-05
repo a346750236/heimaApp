@@ -35,10 +35,18 @@ export default {
     CollectArticle,
     HistoryArticle
   },
-  props: {},
+  props: {
+    type: {
+      type: String
+    }
+  },
   data () {
+    let active = ['collect', 'history'].indexOf(this.type)
+    if (active === -1) {
+      active = 2 // 我的作品
+    }
     return {
-      active: 0 // 控制标签列表
+      active// 控制标签列表
     }
   },
   computed: {},

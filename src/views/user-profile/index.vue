@@ -209,7 +209,7 @@ export default {
         // 关闭图片预览
         this.isPreviewShow = false
 
-        this.toast.success('更新成功')
+        this.$toast.success('更新成功')
       } catch (err) {
         console.log(err)
         this.$toast.fail('更新失败')

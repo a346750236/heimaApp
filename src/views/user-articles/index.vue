@@ -4,11 +4,15 @@
     <van-nav-bar
       title="我的收藏/历史/作品"
       left-arrow
-      @click-left="$router.back()"
+      @click-left="$router.replace('/my')"
       fixed
     />
     <!-- /导航栏 -->
      <!-- 标签列表 -->
+     <!--
+      router.push 会形成历史记录
+      router.replace 也 push 的使用方式一样，但是不会形成历史记录
+     -->
     <van-tabs v-model="active">
       <van-tab title="我的收藏">
         <collect-article />

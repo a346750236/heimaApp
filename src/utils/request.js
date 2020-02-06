@@ -27,7 +27,7 @@ request.defaults.transformResponse = [function (data) {
     // 它默认是这样的
     // return JSON.parse(data)
   } catch (err) {
-    console.log('乔磊牛逼', err)
+    // console.log('乔磊牛逼', err)
     return {}
   }
 }]
@@ -89,14 +89,12 @@ request.interceptors.response.use(function (response) {
       // 修改容器数据必须通过 mutation 来修改
 
       // 3. 如果刷新 token 成功了，则把新的 token 更新到容器中
-      // const token = data.data.token
+      user.token = data.data.token
+      store.commit('setUser', user)
       // store.commit('setUser', {
-      //   token
+      //   ...user, // { id, token, refresh_token }
+      //   token: data.data.token // 更新 token
       // })
-      store.commit('setUser', {
-        ...user, // { id, token, refresh_token }
-        token: data.data.token // 更新 token
-      })
 
       // 4. 把之前失败的请求继续发出去
       // error.config 获取到的是本次请求相关的配置对象，其中包含它的 method、url 等信息

@@ -50,6 +50,12 @@ const routes = [
     ]
   },
   {
+    // 小智同学
+    path: '/user/chat',
+    name: 'user-chat',
+    component: () => import('@/views/user-chat/index.vue')
+  },
+  {
     // 编辑用户
     path: '/user/profile',
     name: 'user-profile',

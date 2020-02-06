@@ -71,9 +71,9 @@ export default {
 
       // 数据更新视图不是立即的，所以如果需要在修改数据之后立即操作数据影响的视图DOM，则把代码写到 $nextTick 函数中
       // 让消息列表滚动到底部
-    //   this.$nextTick(() => {
-    //     this.toBottom()
-    //   })
+      this.$nextTick(() => {
+        this.toBottom()
+      })
       // this.toBottom()
     }
   },
@@ -116,7 +116,14 @@ export default {
 
       // 清空文本框
       this.message = ''
+    },
+    toBottom () {
+      const listContainer = this.$refs['message-list']
+      // listContainer.scrollTop 获取距离顶部的距离
+      // listContainer.scrollTop = xxx 设置距离顶部的距离
+      listContainer.scrollTop = listContainer.scrollHeight
     }
+
   }
 }
 </script>

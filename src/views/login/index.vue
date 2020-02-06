@@ -109,8 +109,9 @@ export default {
         const { data } = await login(user)
         this.$store.commit('setUser', data.data)
         console.log(data)
-        // 登录操作
-        this.$router.push('/')
+        // 登录成功操作
+        const redirect = this.$route.query.redirect || '/'
+        this.$router.push(redirect)
         // 提示成功
         this.$toast.success('登录成功')
       } catch (err) {

@@ -1,7 +1,9 @@
 <template>
   <div class="tabbar-container">
     <!-- 子路由出口 -->
-    <router-view />
+    <keep-alive>
+      <router-view />
+    </keep-alive>
     <!-- /子路由出口 -->
 
     <!-- tab-bar 标签栏 -->

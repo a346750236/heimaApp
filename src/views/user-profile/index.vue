@@ -1,7 +1,7 @@
 <template>
   <div class="user-profile">
     <!-- $router.back()   路由后退 -->
-    <van-nav-bar title="编辑资料" left-arrow @click-left="$router.back()"></van-nav-bar>
+    <van-nav-bar title="编辑资料" left-arrow @click-left="$router.replace('/my')"></van-nav-bar>
     <van-cell-group>
       <van-cell is-link title="头像">
         <van-image round class="avater" :src="user.photo" @click="onAvatarClick" />

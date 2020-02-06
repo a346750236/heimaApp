@@ -1,26 +1,21 @@
 <template>
   <div id="app">
-    <!-- 跟路由出口 -->
-    <!-- <div class="box">Hello Word</div> -->
-    <!-- 标签 -->
-    <!-- <van-icon name="gem-o" /> -->
-    <!-- 这种是引入自己改名字 -->
-    <!-- <van-icon class-prefix="icon" name="NBA" /> -->
-    <!-- 这种是直接使用图标 -->
-    <!-- <i class="icon icon-NBA"></i> -->
-    <!-- 使用van组件   -->
-    <!-- <van-button type="default">默认按钮</van-button>
-    <van-button type="primary">主要按钮</van-button>
-    <van-button type="info">信息按钮</van-button>
-    <van-button type="warning">警告按钮</van-button>
-    <van-button type="danger">危险按钮</van-button>
-    <van-icon name="chat-o" color="#1989fa" />-->
-    <!-- 使用van组件 -->
-    <!-- <van-cell-group>
-      <van-cell title="单元格" value="内容" />
-      <van-cell title="单元格" value="内容" label="描述信息" />
-    </van-cell-group>-->
-    <router-view></router-view>
+    <!--
+      router-view 就是一个动态组件
+     -->
+    <!-- <router-view /> -->
+    <!--
+      keep-alive 是 Vue 本身内置的一个组件，专门用来缓存组件的
+      官方文档：https://cn.vuejs.org/v2/api/#keep-alive
+      默认缓存所有组件
+      也可以通过 include 和 exclude 来配置组件缓存
+        include 可以配置哪些组件缓存
+        exclude 配置哪些组件不要缓存
+     -->
+    <keep-alive :include="$store.state.cachePages">
+      <router-view />
+    </keep-alive>
+    <!-- <router-view></router-view> -->
 
   </div>
 </template>
